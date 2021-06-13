@@ -1,60 +1,70 @@
-from django.contrib.auth import get_user_model
-from django.http.response import HttpResponse, JsonResponse
-from django.shortcuts import render
-from rest_framework import viewsets
-from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.views.decorators.http import require_POST
+from django.contrib.auth import authenticate, login, logout, get_user_model
+from django.http.response import JsonResponse
 from django.db import IntegrityError
+from rest_framework import viewsets, permissions
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
+from .models import Post
+from api.serializers.post_serializer import PostSerializer
 from .serializers.user_serializer import UserSerializer
 
 
 User = get_user_model()
 
 
-class UserViewSet(viewsets.ModelViewSet):
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
-@require_POST
+class PostViewSet(viewsets.ModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(author=self.request.user)
+
+
+@api_view(["POST"])
 def login_view(request):
-    # Attempt to sign user in
-    username = request.POST["username"]
-    password = request.POST["password"]
+    username = request.data.get("username")
+    password = request.data.get("password")
     user = authenticate(request, username=username, password=password)
 
     # Check if authentication successful
     if user is not None:
         login(request, user)
-        return JsonResponse({"success": True})
+        return Response(data=UserSerializer(instance=user).data)
     else:
         return JsonResponse({"success": False})
 
-@require_POST
+@api_view(["POST"])
 def logout_view(request):
     logout(request)
     return JsonResponse({"success": True})
 
 
-@require_POST
+@api_view(["POST"])
 def register(request):
-    username = request.POST["username"]
-    email = request.POST["email"]
+    username = request.data.get("username")
+    password = request.data.get("password")
+    email = request.data.get("email")
 
-    # Ensure password matches confirmation
-    password = request.POST["password"]
-    confirmation = request.POST["confirmation"]
-    if password != confirmation:
-        return JsonResponse({"success": False})
-
-        # Attempt to create new user
+    # Attempt to create new user
     try:
         user = User.objects.create_user(username, email, password)
         user.save()
     except IntegrityError:
         return JsonResponse({"success": False})
     login(request, user)
-    return JsonResponse({"success": True})
+    return Response(UserSerializer(instance=user).data)
+
+@api_view(["GET"])
+def me(request):
+    if request.user.is_authenticated:
+        return Response(data=UserSerializer(instance=request.user).data)
+    else:
+        return JsonResponse({"message": "user is not logged in"})
