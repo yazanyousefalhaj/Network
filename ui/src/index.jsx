@@ -1,8 +1,8 @@
+import React from 'react'
 import ReactDOM from "react-dom"
-import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Switch, Route, Link, Redirect } from 'react-router-dom';
-import Cookies from 'js-cookie'
-import { AuthPage, ProvideAuth } from "./pages/auth.jsx";
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { AuthPage } from "./pages/auth.jsx";
+import { ProvideAuth } from './authContext.jsx'
 import { NavBar } from './components/NavBar.jsx'
 import { HomePage } from "./pages/home.jsx";
 

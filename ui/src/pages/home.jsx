@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from "react"
-import {authContext} from '../pages/auth.jsx'
+import { authContext } from '../authContext.jsx'
 
 
 export const HomePage = () => {

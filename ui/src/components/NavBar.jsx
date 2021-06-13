@@ -1,5 +1,5 @@
 import React, { useContext } from "react"
-import { authContext } from '../pages/auth.jsx'
+import { authContext } from '../authContext.jsx'
 import { Link, useHistory } from 'react-router-dom'
 
 
