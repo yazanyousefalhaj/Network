@@ -2,12 +2,13 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http.response import JsonResponse
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
 from .models import Post
-from api.serializers.post_serializer import PostSerializer
-from .serializers.user_serializer import UserSerializer
+from .model_serializers.post_serializer import PostSerializer
+from .model_serializers.user_serializer import UserSerializer
 
 
 User = get_user_model()
@@ -65,6 +66,18 @@ def register(request):
 @api_view(["GET"])
 def me(request):
     if request.user.is_authenticated:
-        return Response(data=UserSerializer(instance=request.user).data)
+        return Response(data=UserSerializer(instance=request.user, context={"request": request}).data)
     else:
         return JsonResponse({"message": "user is not logged in"})
+
+@api_view(["POST"])
+@permission_classes([permissions.IsAuthenticated])
+def follow(request):
+    print("are we here?")
+    followee_id = request.data.get("user_id")
+    followee = get_object_or_404(User, pk=followee_id)
+    if followee == request.user:
+        return Response(data={"success": False})
+    request.user.followers.add(followee)
+    print("user followed")
+    return Response(data={"success": True})

@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect } from "react"
 import { authContext } from '../authContext.jsx'
+import { postRequestOptions } from '../api.js'
 
 
 export const HomePage = () => {
@@ -9,24 +10,23 @@ export const HomePage = () => {
 
 	useEffect(async () => {
 		if (auth.user) {
-			let res = await fetch("/api/posts.json")
-			setList(await res.json());
+			let res = await fetch("/api/posts.json").then(res => res.json())
+			setList(res);
 		}
 	}, [auth.user])
 
 	const handleSubmit = async (event) => {
 		event.preventDefault();
 		if (body) {
-			const csrftoken = Cookies.get('csrftoken');
-			let res = await fetch(`/api/posts.json`, {
-				method: "post",
-				headers: new Headers({
-					'Content-type': 'application/json',
-					'X-CSRFToken': csrftoken,
-				}),
-				credentials: 'include',
+			let res = await fetch(`/api/posts.json`, { 
+				...postRequestOptions,
 				body: JSON.stringify({ body }),
 			})
+			if (res.status == 201) {
+				let post = await res.json()
+				setList([post, ...list])
+				setBody("")
+			}
 		}
 	}
 
@@ -36,12 +36,6 @@ export const HomePage = () => {
 
 	return (
 		<>
-			{
-				list ? (
-					list.map((post) => (<div key={post.body}>{post.body} -- {post.author}</div>))
-				) : "No Posts"
-			}
-
 			<form onSubmit={handleSubmit}>
 
 				<div className="form-group">
@@ -57,6 +51,21 @@ export const HomePage = () => {
 				</div>
 				<input className="btn btn-primary" type="submit" value="Submit" />
 			</form>
+
+			{
+				list ? (
+					list.map((post) => (
+					<div className="card m-1" key={post.id}>
+						<div className="card-body">
+							<div className="card-title">
+								{post.body}
+							</div>
+							author: {post.author_name} -- likes: {post.likes}
+						</div>
+					</div>))
+				) : "No Posts"
+			}
+
 		</>
 	)
 }

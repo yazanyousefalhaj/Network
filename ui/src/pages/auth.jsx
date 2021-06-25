@@ -1,10 +1,10 @@
-import React, {  useContext, useState } from 'react'
-import { useHistory } from 'react-router';
+import React, { useContext, useState } from 'react'
+import { useHistory, Redirect } from 'react-router';
 import { authContext } from '../authContext.jsx'
 
 
 export const AuthPage = () => {
-  const { signIn, register } = useContext(authContext)
+  const { user, signIn, register } = useContext(authContext)
   const [creds, setCreds] = useState({
     username: "",
     password: "",
@@ -12,6 +12,7 @@ export const AuthPage = () => {
   })
   const [action, setAction] = useState("login")
   const history = useHistory()
+  let { from } = location.state || { from: {pathname: "/"}}
 
 
   const handleSubmit = async (event) => {
@@ -36,47 +37,51 @@ export const AuthPage = () => {
   }
 
   return (
-    <form onSubmit={handleSubmit}>
+    user ? (
+      <Redirect to={from} />
+    ) : (
+      <form onSubmit={handleSubmit}>
+        <div className="form-group">
+          <input
+            autoFocus
+            className="form-control"
+            type="text"
+            name="username"
+            placeholder="Username"
+            onChange={handleFormChanged}
+            value={creds.username}
+          />
+        </div >
 
-      <div className="form-group">
-        <input
-          autoFocus
-          className="form-control"
-          type="text"
-          name="username"
-          placeholder="Username"
-          onChange={handleFormChanged}
-          value={creds.username}
-        />
-      </div>
 
+        {action == "register" &&
+          <div className="form-group">
+            <input
+              className="form-control"
+              type="email"
+              name="email"
+              placeholder="Email"
+              onChange={handleFormChanged}
+              value={creds.email}
+            />
+          </div>
+        }
 
-      {action == "register" &&
         <div className="form-group">
           <input
             className="form-control"
-            type="email"
-            name="email"
-            placeholder="Email"
+            type="password"
+            name="password"
+            placeholder="Password"
             onChange={handleFormChanged}
-            value={creds.email}
+            value={creds.password}
           />
         </div>
-      }
 
-      <div className="form-group">
-        <input
-          className="form-control"
-          type="password"
-          name="password"
-          placeholder="Password"
-          onChange={handleFormChanged}
-          value={creds.password}
-        />
-      </div>
+        <input className="btn btn-primary" type="submit" value="Submit" />
+        <button onClick={() => setAction(action == "login" ? "register" : "login")}>{action == "login" ? "Register" : "Login"}</button>
+      </form >
 
-      <input className="btn btn-primary" type="submit" value="Submit" />
-      <button onClick={() => setAction(action == "login" ? "register" : "login")}>{action == "login" ? "Register" : "Login"}</button>
-    </form>
+    )
   )
 }

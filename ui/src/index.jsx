@@ -5,7 +5,8 @@ import { AuthPage } from "./pages/auth.jsx";
 import { ProvideAuth } from './authContext.jsx'
 import { NavBar } from './components/NavBar.jsx'
 import { HomePage } from "./pages/home.jsx";
-
+import { ProfilePage } from './pages/profile.jsx';
+import "./styles/main.css"
 
 const App = () => {
 
@@ -18,6 +19,7 @@ const App = () => {
 
         <Switch>
           <Route exact path={`/login/`} component={AuthPage} />
+          <Route exact path="/profile/:id" component={ProfilePage} />
           <Route exact path="/" component={HomePage} />
         </Switch>
       </Router>

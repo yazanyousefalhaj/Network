@@ -14,7 +14,7 @@ export const NavBar = () => {
       <div>
         <ul className="navbar-nav mr-auto">
           <li className="nav-item">
-            <a className="nav-link" href="#"><strong>{user ? user.username : "Anonymous"}</strong></a>
+            <Link className="nav-link" to={user? `/profile/${user.id}`: "#"}><strong>{user ? user.username : "Anonymous"}</strong></Link>
           </li>
           <li className="nav-item">
             <Link className="nav-link" to="/">All Posts</Link>
