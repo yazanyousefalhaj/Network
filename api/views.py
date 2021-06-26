@@ -73,11 +73,13 @@ def me(request):
 @api_view(["POST"])
 @permission_classes([permissions.IsAuthenticated])
 def follow(request):
-    print("are we here?")
     followee_id = request.data.get("user_id")
     followee = get_object_or_404(User, pk=followee_id)
     if followee == request.user:
         return Response(data={"success": False})
-    request.user.followers.add(followee)
-    print("user followed")
+    if request.user in followee.followers.all():
+        followee.followers.remove(request.user)
+        return Response(data={"success": True, "removed": True})
+    followee.followers.add(request.user)
+    followee.save()
     return Response(data={"success": True})

@@ -1,26 +1,34 @@
-import React, { useEffect, useState } from "react"
+import React, { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { postRequestOptions } from "../api"
+import { authContext } from "../authContext.jsx"
 
 
 export const ProfilePage = () => {
-	const [user, setUser] = useState(null)
+	const [profileUser, setProfileUser] = useState(null)
+	const {user} = useContext(authContext)
 	let { id } = useParams()
 
 	useEffect(async () => {
 		let res = await fetch(`/api/users/${id}/`).then(res => res.json())
-		console.log(res)
-		setUser(res)
+		setProfileUser(res)
 	}, [id])
 
 	const follow = async () => {
 		let res = await fetch("/api/follow/", { ...postRequestOptions, body: JSON.stringify({ "user_id": id }) })
-		console.log(res)
-		console.log(await res.json())
+		if (res.status == 200) {
+			res = await res.json()
+			if (res.removed) {
+				setProfileUser({...profileUser, followers: profileUser.followers - 1})
+			} else {
+				setProfileUser({...profileUser, followers: profileUser.followers + 1})
+			}
+		}
+
 	}
 
 	return (
-		!user ? <div> Loading</div> : (
+		!profileUser ? <div> Loading</div> : (
 			<div>
 				<div className="row py-5 px-4">
 					<div className="col-md-5 mx-auto">
@@ -34,10 +42,13 @@ export const ProfilePage = () => {
 											width="130"
 											className="rounded mb-2 img-thumbnail"
 										/>
-										<a href="#" className="btn btn-outline-dark btn-sm btn-block">Edit profile</a>
+										{
+											(user && user.id !== Number.parseInt(id)) &&
+												<button href="#" className="btn btn-outline-dark btn-sm btn-block" onClick={follow}>Follow</button>
+										}
 									</div>
 									<div className="media-body mb-5 text-white">
-										<h4 className="mt-0 mb-0">{user.username}</h4>
+										<h4 className="mt-0 mb-0">{profileUser.username}</h4>
 										<p className="small mb-4">
 											<i className="fas fa-map-marker-alt mr-2"></i>New York
 										</p>
@@ -47,13 +58,13 @@ export const ProfilePage = () => {
 							<div className="bg-light p-4 d-flex justify-content-end text-center">
 								<ul className="list-inline mb-0">
 									<li className="list-inline-item">
-										<h5 className="font-weight-bold mb-0 d-block">{user.followers}</h5>
+										<h5 className="font-weight-bold mb-0 d-block">{profileUser.followers}</h5>
 										<small className="text-muted">
 											<i className="fas fa-user mr-1"></i>Followers
 										</small>
 									</li>
 									<li className="list-inline-item">
-										<h5 className="font-weight-bold mb-0 d-block">{user.following}</h5>
+										<h5 className="font-weight-bold mb-0 d-block">{profileUser.following}</h5>
 										<small className="text-muted">
 											<i className="fas fa-user mr-1"></i>Following
 										</small>
@@ -75,8 +86,8 @@ export const ProfilePage = () => {
 								</div>
 								<div className="row">
 									{
-										user.posts ? (
-											user.posts.map((post) => (
+										profileUser.posts ? (
+											profileUser.posts.map((post) => (
 												<div className="card m-1" key={post.id}>
 													<div className="card-body">
 														<div className="card-title">
