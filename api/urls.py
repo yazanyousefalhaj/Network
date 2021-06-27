@@ -9,11 +9,13 @@ router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'posts', views.PostViewSet)
 
+
 urlpatterns = [
     path("login/", views.login_view, name="login"),
     path("logout/", views.logout_view, name="logout"),
     path("register/", views.register, name="register"),
     path("me/", views.me, name="me"),
     path("follow/", views.follow, name="follow"),
+    path("following/", views.FollowingListView.as_view(), name="following"),
     path("", include(router.urls)),
 ]

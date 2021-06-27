@@ -2,6 +2,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http.response import JsonResponse
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions
+from rest_framework import generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -83,3 +84,12 @@ def follow(request):
     followee.followers.add(request.user)
     followee.save()
     return Response(data={"success": True})
+
+
+class FollowingListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get_queryset(self):
+        following = self.request.user.following.all()
+        return Post.objects.filter(author__in=following)

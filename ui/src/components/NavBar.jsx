@@ -20,7 +20,7 @@ export const NavBar = () => {
             <Link className="nav-link" to="/">All Posts</Link>
           </li>
           <li className="nav-item">
-            <Link className="nav-link" to="/">Following</Link>
+            <Link className="nav-link" to="/following">Following</Link>
           </li>
           {user ? (
 

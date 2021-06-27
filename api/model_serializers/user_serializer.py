@@ -9,6 +9,13 @@ class UserPostsSerializer(api.model_serializers.post_serializer.PostSerializer):
         return queryset.filter(author=request.user)
 
 
+class FollowingPostsSerializer(api.model_serializers.post_serializer.PostSerializer):
+    def filter_queryset(self, request, queryset, view):
+        user_following = request.user.following.all()
+        return queryset.filter(author__in=user_following)
+
+
+
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:
         model = get_user_model()
