@@ -1,8 +1,7 @@
 from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http.response import JsonResponse
 from django.db import IntegrityError
-from rest_framework import viewsets, permissions
-from rest_framework import generics
+from rest_framework import viewsets, permissions, pagination, generics
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
@@ -15,6 +14,10 @@ from .model_serializers.user_serializer import UserSerializer
 User = get_user_model()
 
 
+class PostCursorPagination(pagination.CursorPagination):
+    ordering = "-date_created"
+
+
 class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
@@ -25,9 +28,20 @@ class PostViewSet(viewsets.ModelViewSet):
     queryset = Post.objects.all()
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = PostCursorPagination
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
+
+
+class FollowingListView(generics.ListAPIView):
+    serializer_class = PostSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    pagination_class = PostCursorPagination
+
+    def get_queryset(self):
+        following = self.request.user.following.all()
+        return Post.objects.filter(author__in=following)
 
 
 @api_view(["POST"])
@@ -84,12 +98,3 @@ def follow(request):
     followee.followers.add(request.user)
     followee.save()
     return Response(data={"success": True})
-
-
-class FollowingListView(generics.ListAPIView):
-    serializer_class = PostSerializer
-    permission_classes = [permissions.IsAuthenticated]
-
-    def get_queryset(self):
-        following = self.request.user.following.all()
-        return Post.objects.filter(author__in=following)
