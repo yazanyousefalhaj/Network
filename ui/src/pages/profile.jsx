@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react"
 import { useParams } from "react-router-dom"
 import { postRequestOptions } from "../api"
 import { authContext } from "../authContext.jsx"
+import { PostList } from '../components/PostsList.jsx'
 
 
 export const ProfilePage = () => {
@@ -85,19 +86,7 @@ export const ProfilePage = () => {
 									<a href="#" className="btn btn-link text-muted">Show all</a>
 								</div>
 								<div className="row">
-									{
-										profileUser.posts ? (
-											profileUser.posts.map((post) => (
-												<div className="card m-1" key={post.id}>
-													<div className="card-body">
-														<div className="card-title">
-															{post.body}
-														</div>
-														author: {post.author_name} -- likes: {post.likes}
-													</div>
-												</div>))
-										) : "No Posts"
-									}
+									<PostList list={profileUser.posts} />
 								</div>
 							</div>
 						</div>
