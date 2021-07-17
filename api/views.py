@@ -53,7 +53,7 @@ def login_view(request):
     # Check if authentication successful
     if user is not None:
         login(request, user)
-        return Response(data=UserSerializer(instance=user).data)
+        return Response(data=UserSerializer(instance=user, context={"request": request}).data)
     else:
         return JsonResponse({"success": False})
 
