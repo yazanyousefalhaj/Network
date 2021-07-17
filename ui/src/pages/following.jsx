@@ -5,6 +5,8 @@ import { Pagination } from '../components/Pagination.jsx'
 
 export const FollowingPage = () => {
 	return (
-		<Pagination ListComponent={PostList} list_url="/api/following/"/>
+		<Pagination list_url="/api/following/">
+			{(list) => (<PostList list={list} />)}
+		</Pagination>
 	)
 }

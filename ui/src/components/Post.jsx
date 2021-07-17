@@ -1,8 +1,10 @@
 import React from 'react'
 
 
-export const Post = ({ post }) => {
+export const Post = ({ post, editPost }) => {
+
 	return (
+		<>
 		<div className="col-lg-6">
 			<div className="card mb-4">
 				<div className="card-body">
@@ -29,12 +31,14 @@ export const Post = ({ post }) => {
 						<strong>12</strong>
 						<small>Comments</small>
 					</a>
-					<a href="#" className="d-inline-block text-muted ml-3">
-						<small className="align-middle">Repost</small>
-					</a>
+					<button onClick={() => editPost(post)} className="d-inline-block text-muted ml-3">
+						<small className="align-middle">Edit</small>
+					</button>
 				</div>
 
 			</div>
 		</div>
+		
+		</>
 	)
 }

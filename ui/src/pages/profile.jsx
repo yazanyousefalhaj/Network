@@ -1,35 +1,26 @@
-import React, { useContext, useEffect, useState } from "react"
+import React, { useContext } from "react"
+import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
-import { postRequestOptions } from "../api"
+import { fetchProfile, follow } from "../api"
 import { authContext } from "../authContext.jsx"
 import { PostList } from '../components/PostsList.jsx'
 
 
 export const ProfilePage = () => {
-	const [profileUser, setProfileUser] = useState(null)
 	const {user} = useContext(authContext)
 	let { id } = useParams()
+	const queryClient = useQueryClient()
 
-	useEffect(async () => {
-		let res = await fetch(`/api/users/${id}/`).then(res => res.json())
-		setProfileUser(res)
-	}, [id])
+	const { data } = useQuery(["profile", id], fetchProfile)
 
-	const follow = async () => {
-		let res = await fetch("/api/follow/", { ...postRequestOptions, body: JSON.stringify({ "user_id": id }) })
-		if (res.status == 200) {
-			res = await res.json()
-			if (res.removed) {
-				setProfileUser({...profileUser, followers: profileUser.followers - 1})
-			} else {
-				setProfileUser({...profileUser, followers: profileUser.followers + 1})
-			}
+	const followUser = useMutation(follow, {
+		onSuccess: () => {
+			queryClient.invalidateQueries({predicate: query => query.queryKey[0] == "profile"})
 		}
-
-	}
+	})
 
 	return (
-		!profileUser ? <div> Loading</div> : (
+		!data ? <div> Loading</div> : (
 			<div>
 				<div className="row py-5 px-4">
 					<div className="col-md-5 mx-auto">
@@ -45,11 +36,11 @@ export const ProfilePage = () => {
 										/>
 										{
 											(user && user.id !== Number.parseInt(id)) &&
-												<button href="#" className="btn btn-outline-dark btn-sm btn-block" onClick={follow}>Follow</button>
+												<button href="#" className="btn btn-outline-dark btn-sm btn-block" onClick={() => followUser.mutate({id: id})}>Follow</button>
 										}
 									</div>
 									<div className="media-body mb-5 text-white">
-										<h4 className="mt-0 mb-0">{profileUser.username}</h4>
+										<h4 className="mt-0 mb-0">{data.username}</h4>
 										<p className="small mb-4">
 											<i className="fas fa-map-marker-alt mr-2"></i>New York
 										</p>
@@ -59,13 +50,13 @@ export const ProfilePage = () => {
 							<div className="bg-light p-4 d-flex justify-content-end text-center">
 								<ul className="list-inline mb-0">
 									<li className="list-inline-item">
-										<h5 className="font-weight-bold mb-0 d-block">{profileUser.followers}</h5>
+										<h5 className="font-weight-bold mb-0 d-block">{data.followers}</h5>
 										<small className="text-muted">
 											<i className="fas fa-user mr-1"></i>Followers
 										</small>
 									</li>
 									<li className="list-inline-item">
-										<h5 className="font-weight-bold mb-0 d-block">{profileUser.following}</h5>
+										<h5 className="font-weight-bold mb-0 d-block">{data.following}</h5>
 										<small className="text-muted">
 											<i className="fas fa-user mr-1"></i>Following
 										</small>
@@ -86,7 +77,7 @@ export const ProfilePage = () => {
 									<a href="#" className="btn btn-link text-muted">Show all</a>
 								</div>
 								<div className="row">
-									<PostList list={profileUser.posts} />
+									<PostList list={data.posts} />
 								</div>
 							</div>
 						</div>

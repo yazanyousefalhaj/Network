@@ -46,7 +46,9 @@ export const HomePage = () => {
 				<input className="btn btn-primary" type="submit" value="Submit" />
 			</form>
 
-			<Pagination ListComponent={PostList} list_url="/api/posts.json" />
+			<Pagination list_url="/api/posts.json">
+				{(list) => (<PostList list={list} />)}
+			</Pagination>
 
 		</>
 	)

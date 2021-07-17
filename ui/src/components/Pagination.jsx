@@ -1,26 +1,14 @@
-import React, {useState, useContext, useEffect} from "react"
-import {authContext} from '../authContext.jsx'
+import React, { useState, useContext, useEffect } from "react"
+import { useQuery } from 'react-query'
+import { fetchPosts } from "../api.js"
 
-
-export const Pagination = ({ListComponent, list_url}) => {
-
-	const [list, setList] = useState([])
+export const Pagination = ({ children, list_url }) => {
 	const [currentPage, setCurrentPage] = useState(list_url)
-	const [paginationParams, setPaginationParams] = useState({next: null, back: null})
-	const auth = useContext(authContext)
-
-	useEffect(async () => {
-		if (auth.user) {
-			let res = await fetch(currentPage).then(res => res.json())
-			setList(res.results);
-			setPaginationParams({
-				next: res.next,
-				back: res.previous,
-			})
-		}
-	}, [auth.user, currentPage])
+	const { data } = useQuery(["list", currentPage], fetchPosts)
 
 	const navigatePosts = (direction) => {
+		if (!data) return
+		let paginationParams = {next: data.next, back: data.previous}
 		let target = paginationParams[direction]
 		if (target) {
 			setCurrentPage(target)
@@ -29,7 +17,7 @@ export const Pagination = ({ListComponent, list_url}) => {
 
 	return (
 		<>
-			<ListComponent list={list} />
+			{data && children(data.results)}
 			<nav aria-label="Page navigation example">
 				<ul className="pagination justify-content-center">
 					<li className="page-item"><button className="page-link" onClick={() => navigatePosts("back")}>Previous</button></li>
