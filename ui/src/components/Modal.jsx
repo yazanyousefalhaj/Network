@@ -1,11 +1,17 @@
 import React, { useEffect } from 'react'
 
 
-export const Modal = ({ title, children, footer, show }) => {
+export const Modal = ({ title, children, footer, show, onModalHidden }) => {
 	useEffect(() => {
 		console.log("show model effect")
 		$("#myModal").modal(show? "show": "hide")
 	}, [show])
+
+	useEffect(() => {
+		$('#myModal').on('hidden.bs.modal', () => {
+			onModalHidden()
+		})
+	}, [])
 
 	return (
 		<div className="modal" tabIndex="-1" role="dialog" id="myModal">

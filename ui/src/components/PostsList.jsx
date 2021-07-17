@@ -8,7 +8,6 @@ export const PostList = ({ list }) => {
 	const [editPost, setEditPost] = useState(null)
 
 	const handleEditPost = (_post) => {
-		setShowEditPost(false)
 		setShowEditPost(true)
 		setEditPost(_post)
 	}
@@ -24,7 +23,7 @@ export const PostList = ({ list }) => {
 					</div>
 				) : "No Posts"
 			}
-			<EditPost post={editPost} show={showEditPost} />
+			<EditPost post={editPost} show={showEditPost} onModalHidden={() => setShowEditPost(false)} />
 		</>
 	)
 }

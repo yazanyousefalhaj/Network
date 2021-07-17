@@ -4,7 +4,7 @@ import { editPost } from '../api.js'
 import { Modal } from '../components/Modal.jsx'
 
 
-export const EditPost = ({ post, show }) => {
+export const EditPost = ({ post, show, onModalHidden }) => {
 	const [showModal, setShowModal] = useState(false)
 	const [postId, setPostId] = useState(post? post.id: -1)
 	const [postBody, setPostBody] = useState(post? post.body: "")
@@ -29,7 +29,7 @@ export const EditPost = ({ post, show }) => {
 	}, [post])
 
 	return (
-		<Modal title="Edit Post" show={showModal} footer={() => (
+		<Modal title="Edit Post" show={showModal} onModalHidden={onModalHidden} footer={() => (
 			<>
 				<button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>Close</button>
 				<button type="button" className="btn btn-primary" onClick={() => savePost.mutate({ postId: postId, postBody: postBody })}>Save changes</button>
