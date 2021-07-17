@@ -33,6 +33,11 @@ class PostViewSet(viewsets.ModelViewSet):
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
 
+    def perform_update(self, serializer):
+        if self.get_object().author == self.request.user:
+            serializer.save()
+        else:
+            return Response({"success": False})
 
 class FollowingListView(generics.ListAPIView):
     serializer_class = PostSerializer
