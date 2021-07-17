@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react"
 import { useMutation, useQueryClient } from 'react-query'
-import { editPost } from '../api.js'
-import { Modal } from '../components/Modal.jsx'
+import { editPost } from '../api'
+import { Modal } from '../components/Modal'
 
 
 export const EditPost = ({ post, show, onModalHidden }) => {

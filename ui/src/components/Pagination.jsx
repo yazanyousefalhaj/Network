@@ -1,6 +1,6 @@
 import React, { useState, useContext, useEffect } from "react"
 import { useQuery } from 'react-query'
-import { fetchPosts } from "../api.js"
+import { fetchPosts } from "../api"
 
 export const Pagination = ({ children, list_url }) => {
 	const [currentPage, setCurrentPage] = useState(list_url)

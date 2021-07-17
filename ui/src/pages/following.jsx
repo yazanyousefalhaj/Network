@@ -1,6 +1,6 @@
-import React, { useState, useContext, useEffect } from "react"
-import { PostList } from '../components/PostsList.jsx'
-import { Pagination } from '../components/Pagination.jsx'
+import React from "react"
+import { PostList } from '../components/PostsList'
+import { Pagination } from '../components/Pagination'
 
 
 export const FollowingPage = () => {

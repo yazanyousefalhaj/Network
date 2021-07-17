@@ -2,8 +2,8 @@ import React, { useContext } from "react"
 import { useMutation, useQuery, useQueryClient } from "react-query"
 import { useParams } from "react-router-dom"
 import { fetchProfile, follow } from "../api"
-import { authContext } from "../authContext.jsx"
-import { PostList } from '../components/PostsList.jsx'
+import { authContext } from "../authContext"
+import { PostList } from '../components/PostsList'
 
 
 export const ProfilePage = () => {

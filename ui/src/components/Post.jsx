@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 import { useMutation, useQueryClient } from 'react-query'
-import { like } from '../api.js'
-import { authContext } from '../authContext.jsx'
+import { like } from '../api'
+import { authContext } from '../authContext'
 
 
 export const Post = ({ post, editPost }) => {

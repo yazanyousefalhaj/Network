@@ -2,12 +2,12 @@ import React from 'react'
 import ReactDOM from "react-dom"
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { AuthPage } from "./pages/auth.jsx";
-import { ProvideAuth } from './authContext.jsx'
-import { NavBar } from './components/NavBar.jsx'
-import { HomePage } from "./pages/home.jsx";
-import { ProfilePage } from './pages/profile.jsx';
-import { FollowingPage } from './pages/following.jsx';
+import { AuthPage } from "./pages/auth";
+import { ProvideAuth } from './authContext'
+import { NavBar } from './components/NavBar'
+import { HomePage } from "./pages/home";
+import { ProfilePage } from './pages/profile';
+import { FollowingPage } from './pages/following';
 import "./styles/main.css"
 
 

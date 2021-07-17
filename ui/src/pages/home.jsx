@@ -1,8 +1,8 @@
 import React, { useContext, useState, useEffect } from "react"
-import { authContext } from '../authContext.jsx'
-import { postRequestOptions } from '../api.js'
-import { PostList } from "../components/PostsList.jsx"
-import { Pagination } from "../components/Pagination.jsx"
+import { authContext } from '../authContext'
+import { postRequestOptions } from '../api'
+import { PostList } from "../components/PostsList"
+import { Pagination } from "../components/Pagination"
 
 
 export const HomePage = () => {

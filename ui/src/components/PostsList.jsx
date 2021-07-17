@@ -1,6 +1,6 @@
 import React, { useState } from "react"
-import { EditPost } from "./EditPost.jsx"
-import { Post } from './Post.jsx'
+import { EditPost } from "./EditPost"
+import { Post } from './Post'
 
 
 export const PostList = ({ list }) => {

@@ -1,6 +1,6 @@
 import Cookies from 'js-cookie';
 import React, { createContext, useEffect, useState } from 'react'
-import { postRequestOptions } from './api.js'
+import { postRequestOptions } from './api'
 
 
 export const authContext = createContext();

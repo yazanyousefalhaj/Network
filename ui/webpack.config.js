@@ -2,6 +2,7 @@ const path = require("path");
 const webpack = require("webpack");
 
 module.exports = {
+  mode: "development",
   entry: "./src/index.jsx",
   output: {
     path: path.resolve(__dirname, "./static/ui/build"),
@@ -12,15 +13,17 @@ module.exports = {
       {
         test: /\.jsx$/,
         exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-        },
+        loader: "babel-loader",
       },
       {
         test: /\.css$/i,
         use: ['style-loader', 'css-loader'],
       },
     ],
+  },
+    resolve: {
+    modules: ["node_modules",path.resolve(__dirname, "app")],
+    extensions: [".js", ".json", ".jsx", ".css"],
   },
   optimization: {
     minimize: true,
