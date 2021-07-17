@@ -1,10 +1,17 @@
 import React, { useContext } from 'react'
-import { useQueryClient } from 'react-query'
+import { useMutation, useQueryClient } from 'react-query'
+import { like } from '../api.js'
 import { authContext } from '../authContext.jsx'
 
 
 export const Post = ({ post, editPost }) => {
 	const { user } = useContext(authContext)
+	const queryClient = useQueryClient()
+	const likePost = useMutation(like, {
+		onSuccess: () => {
+			queryClient.invalidateQueries({predicate: query => query.queryKey[0] == "list" || query.queryKey[0] == "profile"})
+		}
+	})
 
 	return (
 		<>
@@ -35,13 +42,16 @@ export const Post = ({ post, editPost }) => {
 							<small>Comments</small>
 						</a>
 						{
-							post.author_id == user.id &&
+							user && post.author_id == user.id &&
 							(
 								<button onClick={() => editPost(post)} className="d-inline-block text-muted ml-3">
 									<small className="align-middle">Edit</small>
 								</button>
 							)
 						}
+						<button className="d-inline-block text-muted ml-3" onClick={() => likePost.mutate({id: post.id})}>
+							<small className="align-middle">{post.liked_by_user? "Unlike": "Like"}</small>
+						</button>
 					</div>
 
 				</div>

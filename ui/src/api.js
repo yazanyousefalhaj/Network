@@ -26,9 +26,7 @@ export const fetchPosts = async ({ queryKey }) => {
 
 export const fetchProfile = async ({ queryKey }) => {
   const [_key, id] = queryKey
-
   return fetch(`/api/users/${id}/`).then(res => res.json())
-		setProfileUser(res)
 }
 
 export const editPost = async ({ postId, postBody }) => {
@@ -40,4 +38,8 @@ export const editPost = async ({ postId, postBody }) => {
 
 export const follow = async ({ id }) => {
   return fetch("/api/follow/", { ...postRequestOptions, body: JSON.stringify({ "user_id": id }) })
+}
+
+export const like = async ({ id }) => {
+  return fetch(`/api/posts/${id}/like/`, { ...postRequestOptions })
 }
