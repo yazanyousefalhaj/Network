@@ -2,7 +2,7 @@ from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.http.response import JsonResponse
 from django.db import IntegrityError
 from rest_framework import viewsets, permissions, pagination, generics
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, action
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 
@@ -22,6 +22,7 @@ class UserViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
+    pagination_class = None
 
 
 class PostViewSet(viewsets.ModelViewSet):
@@ -29,6 +30,11 @@ class PostViewSet(viewsets.ModelViewSet):
     serializer_class = PostSerializer
     permission_classes = [permissions.IsAuthenticated]
     pagination_class = PostCursorPagination
+
+    def get_serializer_context(self):
+        context = super().get_serializer_context()
+        context.update({"request": self.request})
+        return context
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -38,6 +44,18 @@ class PostViewSet(viewsets.ModelViewSet):
             serializer.save()
         else:
             return Response({"success": False})
+
+    @action(detail=True, methods=['post'])
+    def like(self, request, pk=None):
+        post = self.get_object()
+        if self.request.user in post.likes.all():
+            post.likes.remove(self.request.user)
+        else:
+            post.likes.add(self.request.user)
+        post.save()
+
+        return Response({"success": True})
+
 
 class FollowingListView(generics.ListAPIView):
     serializer_class = PostSerializer
